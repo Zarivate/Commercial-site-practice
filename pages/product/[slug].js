@@ -1,7 +1,6 @@
 // The brackets in the file name implies that this is a dynamic file, as in can go to
 // /product/someSortOfTypeOfProductHere
-
-import React from "react";
+import React, { useState } from "react";
 import { client, urlFor } from "../../lib/client";
 import {
   AiOutlineMinus,
@@ -9,30 +8,41 @@ import {
   AiFillStar,
   AiOutlineStar,
 } from "react-icons/ai";
+import { Product } from "../../components";
 
 const ProductDetails = ({ product, products }) => {
   // Destructure values within product so as to not have to do "product.image", etc
-  console.log(product);
   const { image, name, details, price } = product;
+
+  // State value to help with changing what gets displayed on the bigger square when a user hovers over a product
+  const [index, setIndex] = useState(0);
+
   return (
     <div>
       <div className="product-detail-container">
         <div>
           <div className="image-container">
-            <img src={urlFor(image && image[0])} />
+            <img
+              src={urlFor(image && image[index])}
+              className="product-detail-image"
+            />
           </div>
-          {/* <div className="small-images-container">
+          <div className="small-images-container">
             {image?.map((item, i) => (
               <img
                 src={urlFor(item)}
-                className=""
-                // Used for when a user hovers over a smaller image to display it as the main/larger image
-                onMouseEnter=""
+                // If the index of the hovered image matches with the one currently set as index, then display
+                className={
+                  i === index ? "small-image selected-image" : "small-image"
+                }
+                // Used for when a user hovers over a smaller image to display it as the main/larger image, a callback function
+                // is made to change the index to the one the user hovered over it
+                onMouseEnter={() => setIndex(i)}
               />
             ))}
-          </div> */}
+          </div>
         </div>
-        <div className="product-details-desc">
+        <div className="product-detail-desc">
           <h1>{name}</h1>
           <div className="reviews">
             <div>
@@ -60,6 +70,26 @@ const ProductDetails = ({ product, products }) => {
                 <AiOutlinePlus />
               </span>
             </p>
+          </div>
+          <div className="buttons">
+            <button type="button" className="add-to-cart" onClick="">
+              Add to Cart
+            </button>
+            <button type="button" className="buy-now" onClick="">
+              Buy Now
+            </button>
+          </div>
+        </div>
+      </div>
+      <div className="maylike-products-wrapper">
+        <h2>You may also like</h2>
+        {/* This is where the scrolling magic happens */}
+        <div className="marquee">
+          {/* The "track" keyword is where the auto scrolling feature comes in */}
+          <div className="maylike-products-container track">
+            {products.map((item) => (
+              <Product key={item._id} product={item} />
+            ))}
           </div>
         </div>
       </div>
