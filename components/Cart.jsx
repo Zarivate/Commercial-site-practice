@@ -10,6 +10,7 @@ import { TiDeleteOutline } from "react-icons/ti";
 import toast from "react-hot-toast";
 import { useStateContext } from "../context/StateContext";
 import { urlFor } from "../lib/client";
+import getStripe from "../lib/getStripe";
 
 const Cart = () => {
   const cartRef = useRef();
@@ -21,6 +22,33 @@ const Cart = () => {
     toggleCartItemQuantity,
     onRemove,
   } = useStateContext();
+
+  const handleCheckout = async () => {
+    // Makes API request to own Next.js backend
+    const stripe = await getStripe();
+
+    const response = await fetch("/api/stripe", {
+      // This is where all the options go like they normally would
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      // Passing all of the products in the cart, since not passed as object like {cartItems: JSON.stringify(cartItems)}. Instead
+      // they are immediately referenced to them.
+      body: JSON.stringify(cartItems),
+    });
+
+    // A 500 means something went wrong so if that's what the status is, just exit out
+    if (response.statusCode === 500) return;
+
+    // Else wait for the data to be returned
+    const data = await response.json();
+    toast.loading("Redirecting...");
+    // Essentially creates an instance of a checkout, allows for data to be stored for if user returns later on to pick up where they left off
+    stripe.redirectToCheckout({
+      sessionId: data.id,
+    });
+  };
 
   return (
     <div className="cart-wrapper" ref={cartRef}>
@@ -105,7 +133,7 @@ const Cart = () => {
               <h3>${totalPrice}</h3>
             </div>
             <div className="btn-container">
-              <button type="button" className="btn" onClick="">
+              <button type="button" className="btn" onClick={handleCheckout}>
                 Pay with Stripe
               </button>
             </div>

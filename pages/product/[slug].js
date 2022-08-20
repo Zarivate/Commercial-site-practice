@@ -33,6 +33,7 @@ const ProductDetails = ({ product, products }) => {
           <div className="small-images-container">
             {image?.map((item, i) => (
               <img
+                key={i}
                 src={urlFor(item)}
                 // If the index of the hovered image matches with the one currently set as index, then display
                 className={
