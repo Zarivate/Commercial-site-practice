@@ -1,5 +1,5 @@
 // File to handle all the context information for the project such as functionality and so forth
-import React, { useState, useEffect, useContext, createContext } from "react";
+import React, { useState, useContext, createContext } from "react";
 // Used for any pop up notifications that may appear on the site for things such as order confirmation and the like
 import { toast } from "react-hot-toast";
 
@@ -130,6 +130,9 @@ export const StateContext = ({ children }) => {
         onAdd,
         toggleCartItemQuantity,
         onRemove,
+        setCartItems,
+        setTotalPrice,
+        setTotalQuantities,
       }}
     >
       {/* Everything will be wrapped by the context provider, providing it all access to the context provider */}
